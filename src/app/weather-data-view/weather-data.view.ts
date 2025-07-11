@@ -8,7 +8,7 @@ import { format } from 'date-fns';
 
 @Component({
   selector: 'weather-data-view',
-  imports: [RouterLink, FormsModule],
+  imports: [FormsModule],
   templateUrl: './weather-data.view.html',
   styleUrl: './weather-data.view.less',
 })
@@ -20,22 +20,24 @@ export class WeatherDataView {
   public location = '';
 
   formatDate(date: string) {
-    format(date, 'EEEE, d. M.');
+    return format(date, 'EEEE, d. M.');
   }
 
   submitLocation() {
     console.log('Location entered:', this.location);
-    // Here, you could call a weather API or other service
+    const url = `${WEATHER_API_BASE_URL}/${this.location}`;
+    console.log('Fetching weather data from:', url);
+
+    this.http.get<any>(url).subscribe({
+      next: (res) => {
+        console.log('API response:', res);
+        this.response = res;
+      },
+      error: (err) => {
+        console.error('API error:', err);
+      },
+    });
   }
 
   response = response;
-
-  // notes = signal<Note[]>([]);
-
-  // ngOnInit(): void {
-  //   this.http.get<Note[]>(WEATHER_API_BASE_URL)
-  //     .subscribe(notes =>
-  //       this.notes.set(notes)
-  //     );
-  // }
 }
