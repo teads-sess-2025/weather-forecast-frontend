@@ -21,6 +21,11 @@ export class WeatherDataView {
 
   public location = '';
 
+  providers: Record<string, string> = {
+    "weather_api": "Weather API",
+    "accu_weather": "AccuWeather"
+  }
+
   formatDate(date: string) {
     return format(date, 'EEEE, d. M.');
   }
@@ -34,6 +39,7 @@ export class WeatherDataView {
       next: (res) => {
         console.log('API response:', res);
         this.data = this.transformForecast(res);
+        console.log(this.data);
       },
       error: (err) => {
         console.error('API error:', err);
@@ -43,46 +49,45 @@ export class WeatherDataView {
 
   transformForecast(response: any) {
     const data: any = {
-      city: response.city,
+      city: {
+        name: response.city.name,
+        lat: response.city.lat,
+        lon: response.city.lon,
+      },
       forecast: [],
-      openAiAdvice: response.openAiAdvice,
+      openAiAdvice: response.openAiAdvice
     };
 
-    // Map to group forecasts by date
     const dateMap: Map<string, any[]> = new Map();
 
-    for (const forecast of response.data) {
-      if (!dateMap.has(forecast.date)) {
-        dateMap.set(forecast.date, []);
+    for (const entry of response.data) {
+      // Normalize date (strip time if present)
+      const normalizedDate = entry.date.split('T')[0];
+
+      if (!dateMap.has(normalizedDate)) {
+        dateMap.set(normalizedDate, []);
       }
 
-      // Push forecast with provider info into the correct date group
-      dateMap.get(forecast.date)?.push({
-        provider: forecast.provider,
-        minTemp: forecast.minTemp,
-        maxTemp: forecast.maxTemp,
-        windSpeed: forecast.windSpeed,
-        totalPrecipitationMm: forecast.totalPrecipitationMm,
-        chanceOfRain: forecast.chanceOfRain,
-        humidity: forecast.humidity,
+      dateMap.get(normalizedDate)?.push({
+        provider: entry.provider,
+        minTemp: entry.minTemp,
+        maxTemp: entry.maxTemp,
+        windSpeed: entry.windSpeed,
+        totalPrecipitationMm: entry.totalPrecipitationMm,
+        chanceOfRain: entry.chanceOfRain,
+        humidity: entry.humidity,
       });
     }
 
-    // Convert map to array
     for (const [date, forecasts] of dateMap.entries()) {
-      data.forecast.push({
-        date,
-        forecast: forecasts,
-      });
+      data.forecast.push({ date, forecast: forecasts });
     }
 
-    // Optional: sort by date
+    // Optional: sort by date ascending
     data.forecast.sort(
-      (a: any, b: any) =>
-        new Date(a.date).getTime() - new Date(b.date).getTime()
+      (a:any, b:any) => new Date(a.date).getTime() - new Date(b.date).getTime()
     );
 
-    console.log(data);
     return data;
   }
 }
