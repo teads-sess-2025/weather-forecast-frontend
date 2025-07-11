@@ -9,9 +9,10 @@
     />
     <button
       (click)="submitLocation()"
-      class="px-5 py-2 rounded-lg bg-[#4799c9] hover:bg-[#377aa1] text-white font-semibold shadow-md transition duration-200"
+      class="px-5 py-2 min-w-30 rounded-lg bg-[#4799c9] hover:bg-[#377aa1] text-white font-semibold shadow-md transition duration-200"
     >
-      🔍 Search
+      {{ loading ? '...' : '🔍 Search' }}
+
     </button>
   </div>
 
