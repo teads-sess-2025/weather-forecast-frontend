@@ -1,0 +1,35 @@
+<h1 class="text-3xl font-medium">Welcome to Weather Forecast App</h1>
+<p>Check out the weather and what to wear for your trip!</p>
+
+<div>
+  <label for="location">Enter location:</label>
+  <input
+    id="location"
+    type="text"
+    [ngModel]="location"
+    placeholder="e.g. Ljubljana"
+    class="border border-gray-400 px-3 py-2 rounded"
+  />
+  <button
+    (click)="submitLocation()"
+    class="px-3 py-2 rounded bg-blue-500 text-white"
+  >
+    Search
+  </button>
+</div>
+
+<h2 class="text-2xl">{{ response.city.name }}</h2>
+
+<div class="flex flex-col gap-2">
+  @for(forecast of response.data; track $index) {
+  <div class="border border-gray-300 rounded px-4 py-5">
+    <p>{{ forecast.provider }}</p>
+    <div class="flex flex-row gap-2">
+      @for(neki of forecast.forecast; track $index) {
+      <div>{{ formatDate(neki.date) }}</div>
+      }
+    </div>
+  </div>
+
+  }
+</div>

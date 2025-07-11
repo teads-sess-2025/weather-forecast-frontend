@@ -1,19 +1,14 @@
 import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
-import {FormsModule} from '@angular/forms';
+import { FormsModule } from '@angular/forms';
+import { WeatherDataView } from './weather-data-view/weather-data.view';
 
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, FormsModule],
+  imports: [RouterOutlet],
   templateUrl: './app.html',
-  styleUrl: './app.css'
+  styleUrl: './app.css',
 })
 export class App {
   protected title = 'Weather Forecast App';
-  public location = '';
-
-  submitLocation() {
-    console.log('Location entered:', this.location);
-    // Here, you could call a weather API or other service
-  }
 }
